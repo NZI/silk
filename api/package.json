@@ -1,0 +1,38 @@
+{
+  "type": "module",
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@swc/cli": "^0.1.59",
+    "@swc/core": "^1.3.27",
+    "@types/cookie": "^0.5.1",
+    "@types/cors": "^2.8.13",
+    "@types/node": "^18.11.18",
+    "@types/ws": "^8.5.4",
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.20",
+    "socket.io-client": "^4.5.4",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
+    "chokidar": "^3.5.3",
+    "cookie": "^0.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "nanoid": "^4.0.0",
+    "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.5.4",
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.1.4",
+    "ts-node": "^10.9.1"
+  },
+  "scripts": {
+    "develop": "concurrently \"nodemon -e ts --exec \\\"spack --config \"$PWD/spack.config.cjs\"\\\"\" \"nodemon ./dist/server.js ./dist/server.js\""
+  }
+}
