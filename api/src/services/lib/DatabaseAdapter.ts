@@ -1,4 +1,4 @@
-import { Service } from "..";
+import { Service } from "./Service";
 
 
 export abstract class DatabaseAdapter extends Service {

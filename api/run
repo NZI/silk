@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CLIENT_OUTPUT="../webapp/src/api.ts" \
+  concurrently "tsc --build --clean && tsc --watch" \
+  "nodemon --watch src -e ts --exec \"spack --config \"$PWD/spack.server.cjs\"\"" \
+  "nodemon --watch src -e ts --exec \"spack --config \"$PWD/spack.cli.cjs\"\"" \
+  "nodemon --watch ./dist/server.js ./dist/server.js" 

@@ -18,13 +18,14 @@ export class SqliteDatabaseAdapter extends DatabaseAdapter {
       name varchar(255) NOT NULL
     )`)
 
-    const currentMigrationsResult = await this.all(`SELECT name FROM migration`)
+    const currentMigrationsResult: { name: string }[] = await this.all(`SELECT name FROM migration`)
     const currentBatchResult = await this.selectOne(`SELECT MAX(batch) as batch FROM migration`)
     const batch = +(currentBatchResult.batch ?? 0)
 
-    const lastMigrationsResult = await this.all(`SELECT name FROM migration WHERE batch = :batch`, {
+    const lastMigrationsResult: { name: string }[] = await this.all(`SELECT name FROM migration WHERE batch = :batch`, {
       ":batch": batch
     })
+
     const lastMigrations = lastMigrationsResult.map(({ name }) => name)
 
     const currentMigrations = currentMigrationsResult.map(({ name }) => name)
@@ -42,7 +43,7 @@ export class SqliteDatabaseAdapter extends DatabaseAdapter {
   constructor(services: Services) {
     super(services)
 
-    const filename = this.services.EnvService().get("SQLITE_PATH", "./data/database.sqlite")
+    const filename = this.services.Env.get("SQLITE_PATH", "./data/database.sqlite")
     this.db = open({
       driver: sqlite3.Database,
       filename,
@@ -59,7 +60,7 @@ export class SqliteDatabaseAdapter extends DatabaseAdapter {
   public async selectOne(sql: string, params?: any) {
     const db = await this.db
 
-    const r = await db.get(sql, params) 
+    const r = await db.get(sql, params)
 
     return r
   }

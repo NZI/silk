@@ -77,7 +77,7 @@ export function Api(io: Server, getUser: UserGetter, getSession: SessionGetter) 
           socket.emit(":call:", id, false, `${service}.${method}() either not found or not allowed`)
           return
         }
-        const serviceInst = services[service]()
+        const serviceInst = services[service]
 
         if (!(method in serviceInst)) {
           socket.emit(":call:", id, false, `${service}.${method}() either not found or not allowed`)
@@ -99,7 +99,6 @@ export function Api(io: Server, getUser: UserGetter, getSession: SessionGetter) 
           )
         )
 
-
         if (serviceGuard && methodGuard) {
           let newArgs = []
           let injectedArgs = []
@@ -107,6 +106,7 @@ export function Api(io: Server, getUser: UserGetter, getSession: SessionGetter) 
             const inject = serviceInst._inject[method]
             for (let i = 0; i < inject.max || i < args.length; i++) {
               if (inject[i]) {
+                console.log({ api: user, service, method })
                 const injectedArg = inject[i]({ user, socket, session, cookies })
                 injectedArgs.push(injectedArg)
                 newArgs.push(injectedArg)

@@ -1,20 +1,10 @@
-import { Box, Button, ChakraProps, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Grid, Icon, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormErrorMessage, Grid, Input, Text } from "@chakra-ui/react";
 import { navigate, RouteComponentProps } from "@reach/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { BsShieldLock } from "react-icons/bs";
 import { useMutation, useQueryClient } from "react-query";
 import { client } from "../client";
-
-const Container: React.FC<React.PropsWithChildren<ChakraProps>> = (props) => {
-  return <Flex
-    width="full"
-    height="full"
-    minHeight="100vh"
-    alignItems="center"
-    justifyContent="center"
-    {...props} />
-}
+import { Container } from "../components/Container";
 
 interface UserLoginData {
   email: string
@@ -33,11 +23,12 @@ interface FormProps {
 const LoginForm: React.FC<FormProps> = ({ show, onSubmit }) => {
   const queryClient = useQueryClient()
 
-  const login = useMutation((data: UserLoginData) => {
-    return client.UserService().login(data.email, data.password)
+  const login = useMutation(async (data: UserLoginData) => {
+
+    return client.User.login(data.email, data.password)
   }, {
     onSettled() {
-      queryClient.invalidateQueries(['me'])
+      queryClient.invalidateQueries("me", { refetchInactive: true })
     }
   })
 
@@ -45,7 +36,6 @@ const LoginForm: React.FC<FormProps> = ({ show, onSubmit }) => {
   const { handleSubmit, register, setError, formState: { errors } } = useForm<UserLoginData>()
   const beforeSubmit = async (data: UserLoginData) => {
     const user = await login.mutateAsync(data)
-    console.log({ user })
     if (user) {
       onSubmit()
     } else {
@@ -56,7 +46,7 @@ const LoginForm: React.FC<FormProps> = ({ show, onSubmit }) => {
   return <Flex as="form" gap={4}
     gridArea="a"
     opacity={show ? 1 : 0}
-    zIndex={show ? 1 : 1}
+    zIndex={1}
     pointerEvents={show ? "all" : "none"}
     transition="0.3s all"
     flexDirection="column"
@@ -93,7 +83,7 @@ const RegisterForm: React.FC<FormProps> = ({ show, onSubmit }) => {
       setError("confirmPassword", { message: "Passwords must match" })
       return
     }
-    if (await client.UserService().register(data.email, data.password)) {
+    if (await client.User.register(data.email, data.password)) {
       onSubmit()
     }
   }
@@ -141,7 +131,7 @@ const RegisterForm: React.FC<FormProps> = ({ show, onSubmit }) => {
 const LoginPage: React.FC<RouteComponentProps> = () => {
   const [showLogin, setShowLogin] = useState(true)
 
-  return <Container background="#535353">
+  return <Container backgroundColor="gray.800">
     <Flex
       flexDirection="column"
       justifyContent="center"
@@ -198,7 +188,7 @@ const LoginPage: React.FC<RouteComponentProps> = () => {
         <RegisterForm show={!showLogin} onSubmit={() => setShowLogin(true)} />
       </Grid>
     </Flex>
-  </Container >
+  </Container>
 }
 
 export default LoginPage

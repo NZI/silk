@@ -1,0 +1,27 @@
+import type { Service } from "./lib/Service";
+import { Cli } from "./Cli";
+import { Database } from "./Database";
+import { Env } from "./Env";
+import { FileSessionAdapter } from "./FileSessionAdapter";
+import { MemorySessionAdapter } from "./MemorySessionAdapter";
+import { Paginate } from "./Paginate";
+import { Permission } from "./Permission";
+import { Role } from "./Role";
+import { Session } from "./Session";
+import { SqliteDatabaseAdapter } from "./SqliteDatabaseAdapter";
+import { User } from "./User";
+export type Services = {
+    get<T extends Service>(key: string): T;
+    Cli: Cli;
+    Database: Database;
+    Env: Env;
+    FileSessionAdapter: FileSessionAdapter;
+    MemorySessionAdapter: MemorySessionAdapter;
+    Paginate: Paginate;
+    Permission: Permission;
+    Role: Role;
+    Session: Session;
+    SqliteDatabaseAdapter: SqliteDatabaseAdapter;
+    User: User;
+};
+export declare const services: Services;

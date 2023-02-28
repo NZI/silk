@@ -33,6 +33,6 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "develop": "concurrently \"nodemon -e ts --exec \\\"spack --config \"$PWD/spack.config.cjs\"\\\"\" \"nodemon ./dist/server.js ./dist/server.js\""
+    "develop": "./run"
   }
 }

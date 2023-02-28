@@ -9,7 +9,7 @@ export class FileSessionAdapter extends SessionAdapter {
   constructor(services: Services) {
     super(services)
 
-    this.path = this.services.EnvService().get('SESSION_PATH', '../data/sessions')
+    this.path = this.services.Env.get('SESSION_PATH', '../data/sessions')
     this.data = {}
   }
 

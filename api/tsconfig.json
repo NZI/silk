@@ -1,0 +1,9 @@
+{
+  "include": ["./src/services/*"],
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "../common"
+  }
+}

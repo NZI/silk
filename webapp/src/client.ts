@@ -1,3 +1,3 @@
-import { Client } from "../../api/src/client";
+import Client from "./api";
 
 export const { client, socket } = Client("localhost:4000")

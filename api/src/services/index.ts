@@ -1,90 +1,154 @@
 
-import { BookService } from "./BookService"
-import { DatabaseService } from "./DatabaseService"
-import { EnvService } from "./EnvService"
+import type { Service } from "./lib/Service"
+import { Cli } from "./Cli"
+import { Database } from "./Database"
+import { Env } from "./Env"
 import { FileSessionAdapter } from "./FileSessionAdapter"
 import { MemorySessionAdapter } from "./MemorySessionAdapter"
-import { SessionService } from "./SessionService"
+import { Paginate } from "./Paginate"
+import { Permission } from "./Permission"
+import { Role } from "./Role"
+import { Session } from "./Session"
 import { SqliteDatabaseAdapter } from "./SqliteDatabaseAdapter"
-import { UserService } from "./UserService"
+import { User } from "./User"
 
 export type Services = {
-  BookService: () => BookService
-  DatabaseService: () => DatabaseService
-  EnvService: () => EnvService
-  FileSessionAdapter: () => FileSessionAdapter
-  MemorySessionAdapter: () => MemorySessionAdapter
-  SessionService: () => SessionService
-  SqliteDatabaseAdapter: () => SqliteDatabaseAdapter
-  UserService: () => UserService
-}
-export type IntServices = {
-  BookService: BookService
-  DatabaseService: DatabaseService
-  EnvService: EnvService
+  get<T extends Service>(key: string): T
+  Cli: Cli
+  Database: Database
+  Env: Env
   FileSessionAdapter: FileSessionAdapter
   MemorySessionAdapter: MemorySessionAdapter
-  SessionService: SessionService
+  Paginate: Paginate
+  Permission: Permission
+  Role: Role
+  Session: Session
   SqliteDatabaseAdapter: SqliteDatabaseAdapter
-  UserService: UserService
+  User: User
 }
 
-export type PermChecker = (...roles: (string|TemplateStringsArray)[]) => boolean
-
-export function Inject(cb: (connectionData: any) => keyof typeof connectionData) {
-  return (target: any, methodKey: string, parameterIndex: number) => {
-    
-    if (target._inject === undefined) {
-      target._inject = {}
-    }
-    if (target._inject[methodKey] === undefined) {
-      target._inject[methodKey] = {}
-    }
-    target._inject[methodKey].max = Math.max(target._inject[methodKey].max ?? 1, parameterIndex + 1)
-    target._inject[methodKey][parameterIndex] = cb
+function generateServices(): Services {
+  const services: Partial<Services> = {
+  Cli: null,
+  Database: null,
+  Env: null,
+  FileSessionAdapter: null,
+  MemorySessionAdapter: null,
+  Paginate: null,
+  Permission: null,
+  Role: null,
+  Session: null,
+  SqliteDatabaseAdapter: null,
+  User: null
   }
-}
 
 
-export function Allow(...perms: ((R: PermChecker, P: PermChecker) => boolean)[]): any {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    if (propertyKey === undefined) {
-      if (target.prototype._allowAll === undefined) {
-        target.prototype._allowAll = []
-      }
-      target.prototype._allowAll.push(perms)
-    } else {
-      if (target._allowedMethods === undefined) {
-        target._allowedMethods = {}
-      }
-      if (!(propertyKey in target._allowedMethods)) {
-        target._allowedMethods[propertyKey] = []
-      }
-      target._allowedMethods[propertyKey].push(perms)
+  const self = {
+    get<T extends Service>(key: string): T {
+      return (self as any)[key] as T
     }
-  }
-}
+  } as Services
 
-export abstract class Service {
-  protected services: Services;
-  constructor(services: Services) {
-    this.services = services;
-  }
-}
+  Object.defineProperty(self, "Cli", {
+    get() {
+      if (services.Cli === null) {
+        services.Cli = new Cli(self);
+      }
+      return services.Cli
+    }
+  });
 
-function generateServices(){
-  const services = {} as IntServices
-  const self = {} as Services
+  Object.defineProperty(self, "Database", {
+    get() {
+      if (services.Database === null) {
+        services.Database = new Database(self);
+      }
+      return services.Database
+    }
+  });
 
-  self.BookService = () => 'BookService' in services ? services['BookService'] : services['BookService'] = new BookService(self);  
-  self.DatabaseService = () => 'DatabaseService' in services ? services['DatabaseService'] : services['DatabaseService'] = new DatabaseService(self);  
-  self.EnvService = () => 'EnvService' in services ? services['EnvService'] : services['EnvService'] = new EnvService(self);  
-  self.FileSessionAdapter = () => 'FileSessionAdapter' in services ? services['FileSessionAdapter'] : services['FileSessionAdapter'] = new FileSessionAdapter(self);  
-  self.MemorySessionAdapter = () => 'MemorySessionAdapter' in services ? services['MemorySessionAdapter'] : services['MemorySessionAdapter'] = new MemorySessionAdapter(self);  
-  self.SessionService = () => 'SessionService' in services ? services['SessionService'] : services['SessionService'] = new SessionService(self);  
-  self.SqliteDatabaseAdapter = () => 'SqliteDatabaseAdapter' in services ? services['SqliteDatabaseAdapter'] : services['SqliteDatabaseAdapter'] = new SqliteDatabaseAdapter(self);  
-  self.UserService = () => 'UserService' in services ? services['UserService'] : services['UserService'] = new UserService(self);
+  Object.defineProperty(self, "Env", {
+    get() {
+      if (services.Env === null) {
+        services.Env = new Env(self);
+      }
+      return services.Env
+    }
+  });
+
+  Object.defineProperty(self, "FileSessionAdapter", {
+    get() {
+      if (services.FileSessionAdapter === null) {
+        services.FileSessionAdapter = new FileSessionAdapter(self);
+      }
+      return services.FileSessionAdapter
+    }
+  });
+
+  Object.defineProperty(self, "MemorySessionAdapter", {
+    get() {
+      if (services.MemorySessionAdapter === null) {
+        services.MemorySessionAdapter = new MemorySessionAdapter(self);
+      }
+      return services.MemorySessionAdapter
+    }
+  });
+
+  Object.defineProperty(self, "Paginate", {
+    get() {
+      if (services.Paginate === null) {
+        services.Paginate = new Paginate(self);
+      }
+      return services.Paginate
+    }
+  });
+
+  Object.defineProperty(self, "Permission", {
+    get() {
+      if (services.Permission === null) {
+        services.Permission = new Permission(self);
+      }
+      return services.Permission
+    }
+  });
+
+  Object.defineProperty(self, "Role", {
+    get() {
+      if (services.Role === null) {
+        services.Role = new Role(self);
+      }
+      return services.Role
+    }
+  });
+
+  Object.defineProperty(self, "Session", {
+    get() {
+      if (services.Session === null) {
+        services.Session = new Session(self);
+      }
+      return services.Session
+    }
+  });
+
+  Object.defineProperty(self, "SqliteDatabaseAdapter", {
+    get() {
+      if (services.SqliteDatabaseAdapter === null) {
+        services.SqliteDatabaseAdapter = new SqliteDatabaseAdapter(self);
+      }
+      return services.SqliteDatabaseAdapter
+    }
+  });
+
+  Object.defineProperty(self, "User", {
+    get() {
+      if (services.User === null) {
+        services.User = new User(self);
+      }
+      return services.User
+    }
+  });
+
   return self
 }
 
-export const services: Services = generateServices()
+export const services = generateServices()
